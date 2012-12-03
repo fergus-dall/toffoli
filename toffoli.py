@@ -1,6 +1,9 @@
 import sys
 import termios
 import tty
+import re
+
+validate = re.compile("\s*((TOFF|JMP|IN|OUT)(\s+#?\d+)+)?\s*(;.*)?",re.DOTALL)
 
 memory = {}
 
@@ -47,8 +50,20 @@ def bit_to_ch(l):
         ch += l.pop(0)
     return chr(ch)
 
+def validate_line(str):
+    result = validate.match(str)
+    if result is not None:
+        return str[:result.end()] == str
+    else:
+        return False
+
 with open(sys.argv[1],'r') as file:
     lines = file.readlines()
+
+for (index,i) in enumerate(lines):
+    if not validate_line(i):
+        print "Syntax error on line %s\n%s" %(index,i)
+        sys.exit(1)
 
 for (index,i) in enumerate(lines):
     if i.find(';') != -1:
