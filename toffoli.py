@@ -71,7 +71,7 @@ while instruction_pointer < len(lines):
     elif lines[instruction_pointer][0] == 'JMP':
         inputs = lines[instruction_pointer][1:]
         if deref(inputs[0]):
-            instruction_pointer = int(inputs[1][1:]) - 1
+            instruction_pointer = int(inputs[1]) - 1
 
     elif lines[instruction_pointer][0] == 'IN':
         inputs = lines[instruction_pointer][1:]
