@@ -7,8 +7,8 @@ pltgames submission.
 Memory
 -------
 
-Memory in Toffoli is an infinite array, in both directions, of bits that
-are initalised to 0.
+Memory in Toffoli is an infinite array, starting at adress 0, of bits
+that are initalised to 0.
 
 Syntax
 -------
@@ -22,7 +22,9 @@ address. Numbers are written literaly while memory addresses are
 prefaced by a #, e.g.:
 1 is the number 1
 #7 is a reference to memory address 7
-#-1 is a refernce to memory address -1
+
+Internaly, syntax is validated by the regular expression:
+\s*((TOFF|JMP|IN|OUT)(\s+#?\d+)+)?\s*(;.*)?
 
 Instructions
 -------
