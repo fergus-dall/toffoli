@@ -2,10 +2,6 @@ import sys
 import termios
 import tty
 
-fd = sys.stdin.fileno()
-old_settings = termios.tcgetattr(fd)
-tty.setraw(sys.stdin.fileno(),termios.TCSADRAIN)
-
 memory = {}
 
 def get_bit(bit):
@@ -27,7 +23,13 @@ def deref(addr):
     return int(addr)
 
 def get_ch():
-    ch = sys.stdin.read(1)
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
+    try:
+        tty.setraw(sys.stdin.fileno(),termios.TCSADRAIN)
+        ch = sys.stdin.read(1)
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
     return ch
 
 def ch_to_bit(ch):
@@ -88,5 +90,4 @@ while instruction_pointer < len(lines):
         
     instruction_pointer += 1
 
-termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
 print memory
