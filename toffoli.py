@@ -89,3 +89,5 @@ while instruction_pointer < len(lines):
         sys.stdout.write(ch)
         
     instruction_pointer += 1
+
+print
