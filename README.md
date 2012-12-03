@@ -43,6 +43,7 @@ Toffoli contains four instructions:
 TOFF - toffoli gate
 -------
 Usage:
+
 `TOFF [num/addr] [num/addr] [num/addr] [addr]`
 
 A toffoli gate, or a controlled-controlled-NOT gate works as follows:
@@ -58,6 +59,7 @@ and stores the result in the address given as the fourth input.
 JMP -- Conditional jump
 -------
 Usage:
+
 `JMP [num/addr] [num]`
 
 If the first input is not 0, or if the value stored at the bit refered
@@ -67,6 +69,7 @@ numbered by the second input. Instructions are numbered starting at 0.
 IN -- input
 -------
 Usage:
+
 `IN [addr]`
 
 Take one character as input and store the corresponding byte in the 8
@@ -75,6 +78,7 @@ bits starting at `[addr]`.
 OUT -- output
 -------
 Usage:
+
 `OUT [addr]`
 
 Interpret the 8 bits starting at `[addr]` as a character and output it.
