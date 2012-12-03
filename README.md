@@ -5,13 +5,13 @@ Toffoli is a turing tarpit based on toffoli gates. It was created as a
 pltgames submission.
 
 Memory
--------
+=============
 
 Memory in Toffoli is an infinite array, starting at adress 0, of bits
 that are initalised to 0.
 
 Syntax
--------
+=============
 
 Toffoli syntax is very simple, just the name of the instruction,
 followed by the inputs, separated by spaces:
@@ -20,16 +20,18 @@ followed by the inputs, separated by spaces:
 Each input can be either a number or a reference to a memory
 address. Numbers are written literaly while memory addresses are
 prefaced by a #, e.g.:
-1 is the number 1
-#7 is a reference to memory address 7
-
-Internaly, syntax is validated by the regular expression:
-\s*((TOFF|JMP|IN|OUT)(\s+#?\d+)+)?\s*(;.*)?
+* 1 is the number 1
+* #7 is a reference to memory address 7
 
 Instructions
--------
+=============
 
 Toffoli contains four instructions:
+
+* TOFF
+* JMP
+* IN
+* OUT
 
 TOFF - toffoli gate
 -------
