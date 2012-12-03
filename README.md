@@ -4,6 +4,11 @@ Toffoli
 Toffoli is a turing tarpit based on toffoli gates. It was created as a
 pltgames submission.
 
+To use the interpreter, call toffoli.py on the command line with your
+code as input, eg:
+
+`python toffoli.py hello_world.toff`
+
 Memory
 =============
 
@@ -15,11 +20,13 @@ Syntax
 
 Toffoli syntax is very simple, just the name of the instruction,
 followed by the inputs, separated by spaces:
+
 [instruction] [input1] [input2] [input3] ...
 
 Each input can be either a number or a reference to a memory
 address. Numbers are written literaly while memory addresses are
 prefaced by a #, e.g.:
+
 * 1 is the number 1
 * #7 is a reference to memory address 7
 
@@ -36,7 +43,7 @@ Toffoli contains four instructions:
 TOFF - toffoli gate
 -------
 Usage:
-TOFF [num/addr] [num/addr] [num/addr] [addr]
+`TOFF [num/addr] [num/addr] [num/addr] [addr]`
 
 A toffoli gate, or a controlled-controlled-NOT gate works as follows:
 
@@ -51,7 +58,7 @@ and stores the result in the address given as the fourth input.
 JMP -- Conditional jump
 -------
 Usage:
-JMP [num/addr] [num]
+`JMP [num/addr] [num]`
 
 If the first input is not 0, or if the value stored at the bit refered
 to by the first input is 1, then continue execution at the instruction
@@ -60,14 +67,14 @@ numbered by the second input. Instructions are numbered starting at 0.
 IN -- input
 -------
 Usage:
-IN [addr]
+`IN [addr]`
 
 Take one character as input and store the corresponding byte in the 8
-bits starting at [addr].
+bits starting at `[addr]`.
 
 OUT -- output
 -------
 Usage:
-OUT [addr]
+`OUT [addr]`
 
-Interpret the 8 bits starting at [addr] as a character and output it.
+Interpret the 8 bits starting at `[addr]` as a character and output it.
