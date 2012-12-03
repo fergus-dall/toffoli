@@ -44,7 +44,7 @@ def bit_to_ch(l):
     ch = 0
     while len(l) != 0:
         ch <<= 1
-        ch += l.pop()
+        ch += l.pop(0)
     return chr(ch)
 
 with open(sys.argv[1],'r') as file:
