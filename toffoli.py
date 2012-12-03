@@ -43,8 +43,8 @@ def ch_to_bit(ch):
 def bit_to_ch(l):
     ch = 0
     while len(l) != 0:
-        ch += l.pop()
         ch <<= 1
+        ch += l.pop()
     return chr(ch)
 
 with open(sys.argv[1],'r') as file:
@@ -89,5 +89,3 @@ while instruction_pointer < len(lines):
         sys.stdout.write(ch)
         
     instruction_pointer += 1
-
-print memory
