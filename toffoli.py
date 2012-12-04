@@ -40,7 +40,7 @@ file_name = arg['file-name']
 dump = arg['dump']
 
 validate = re.compile(
-    "\s*((TOFF|JMP|IN|OUT|DUMP)(\s+\d*#?\d+)+)?\s*(;.*)?"
+    "\s*((TOFF|JMP|IN|OUT|DUMP)(\s+\d*#?\d+)*)?\s*(;.*)?"
     ,re.DOTALL)
 
 memory = {}
