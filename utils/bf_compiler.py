@@ -58,14 +58,14 @@ class bf_mvright(bf_compile):
         bf_compile.__init__(self,'>')
     def __call__(self,inst_count):
         inst_list = []
-        
-        for i in range(8*pointer_len,9*pointer_len):
-            #set each value in the carry area to 0
-            inst_list.append("TOFF 1 #%s #%s #%s" % (i,i,i))
-            if i == 9*pointer_len - 4:
-                #flip the fourth bit to add 8 to the pointer
-                inst_list.append("TOFF 1 1 #%s #%s" % (i,i))
-        for i in range(8):        
+        for i in range(8):
+            for j in range(8*pointer_len,9*pointer_len):
+                #set each value in the carry area to 0
+                inst_list.append("TOFF 1 #%s #%s #%s" % (j,j,j))
+                if j == 9*pointer_len - 4:
+                    #flip the fourth bit to add 8 to the pointer
+                    inst_list.append("TOFF 1 1 #%s #%s" % (j,j))
+
             for j in range((i+1)*pointer_len - 1,i*pointer_len,-1):
                 #if both the carry bit and the value are set, set the
                 #next carry bit
@@ -73,6 +73,40 @@ class bf_mvright(bf_compile):
                     "TOFF #%s #%s #%s #%s" % (j, j + pointer_len*(8-i),
                                               j + pointer_len*(8-i) - 1,
                                               j + pointer_len*(8-i) - 1))
+                #if carry XOR value is true, set the value bit
+                inst_list.append(
+                    "TOFF 1 #%s #%s #%s" % (j, j + pointer_len*(8-i), j))
+            #last bit doesn't set a carry bit
+            inst_list.append("TOFF 1 #%s #%s #%s" % (0, pointer_len, 0))
+
+        if dump:
+            inst_list.append("DUMP")
+
+        self.inst_count = len(inst_list)
+        return inst_list
+
+class bf_mvleft(bf_compile):
+    def __init__(self):
+        bf_compile.__init__(self,'<')
+    def __call__(self,inst_count):
+        inst_list = []
+        for i in range(8):
+            for j in range(8*pointer_len,9*pointer_len):
+                #set each value in the carry area to 0
+                inst_list.append("TOFF 1 #%s #%s #%s" % (j,j,j))
+                if j == 9*pointer_len - 4:
+                    #flip the fourth bit to add 8 to the pointer
+                    inst_list.append("TOFF 1 1 #%s #%s" % (j,j))
+
+            for j in range((i+1)*pointer_len - 1,i*pointer_len,-1):
+                #if the carry bit is set and the value is not, set the
+                #next carry bit
+                inst_list.append("TOFF 1 1 #%s #%s" % (j,j))
+                inst_list.append(
+                    "TOFF #%s #%s #%s #%s" % (j, j + pointer_len*(8-i),
+                                              j + pointer_len*(8-i) - 1,
+                                              j + pointer_len*(8-i) - 1))
+                inst_list.append("TOFF 1 1 #%s #%s" % (j,j))
                 #if carry XOR value is true, set the value bit
                 inst_list.append(
                     "TOFF 1 #%s #%s #%s" % (j, j + pointer_len*(8-i), j))
@@ -127,6 +161,8 @@ inst_list = []
 for i in bf_code:
     if i == '>':
         bf_obj_list.append(bf_mvright())
+    elif i == '<':
+        bf_obj_list.append(bf_mvleft())
     elif i == ',':
         bf_obj_list.append(bf_input())
     elif i == '.':
