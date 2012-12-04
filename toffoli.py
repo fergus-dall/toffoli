@@ -159,7 +159,7 @@ while instruction_pointer < len(lines):
 
     elif lines[instruction_pointer][0] == 'DUMP':
         if dump:
-            pprint(memory)
+            pprint.pprint(memory)
 
     instruction_pointer += 1
 
