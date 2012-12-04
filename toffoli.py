@@ -158,15 +158,7 @@ while instruction_pointer < len(lines):
         sys.stdout.write(ch)
 
     elif lines[instruction_pointer][0] == 'DUMP':
-<<<<<<< HEAD
-<<<<<<< HEAD
         if dump:
-=======
-        if args.dump:
->>>>>>> Added proper argument parsing to the Toffoli interpreter.
-=======
-        if dump:
->>>>>>> Fixed bugs in the interpreters argument parsing
             pprint(memory)
 
     instruction_pointer += 1
