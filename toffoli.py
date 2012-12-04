@@ -1,6 +1,4 @@
 import sys
-import termios
-import tty
 import re
 
 validate = re.compile("\s*((TOFF|JMP|IN|OUT)(\s+#?\d+)+)?\s*(;.*)?",re.DOTALL)
@@ -26,13 +24,7 @@ def deref(addr):
     return int(addr)
 
 def get_ch():
-    fd = sys.stdin.fileno()
-    old_settings = termios.tcgetattr(fd)
-    try:
-        tty.setraw(sys.stdin.fileno(),termios.TCSADRAIN)
-        ch = sys.stdin.read(1)
-    finally:
-        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+    ch = sys.stdin.read(1)
     return ch
 
 def ch_to_bit(ch):
