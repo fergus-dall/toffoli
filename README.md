@@ -9,6 +9,9 @@ code as input, eg:
 
 `python toffoli.py hello_world.toff`
 
+As a proof of turing-completness, a brainfuck to Toffoli compiler is
+included in the utils directory as "bf_compiler.py".
+
 Memory
 =============
 
