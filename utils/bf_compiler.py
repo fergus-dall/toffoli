@@ -43,26 +43,18 @@ arg.add_argument(
 arg = vars(arg.parse_args())
 file_name = arg['file-name']
 pointer_len = arg['pointer_len']
+carry_start = pointer_len * 8
+carry_end = carry_start + max(8,pointer_len)
 dump = arg['dump']
 
-class bf_compile():
-    def __init__(self,code):
-        self.code = code
-        self.len = len(code)
-    def __call__(self,inst_count):
-        self.inst_count = 0
-        return []
-
-class bf_mvright(bf_compile):
-    def __init__(self):
-        bf_compile.__init__(self,'>')
+class bf_mvright():
     def __call__(self,inst_count):
         inst_list = []
         for i in range(8):
-            for j in range(8*pointer_len,9*pointer_len):
+            for j in range(carry_start,carry_start + pointer_len):
                 #set each value in the carry area to 0
                 inst_list.append("TOFF 1 #%s #%s #%s" % (j,j,j))
-                if j == 9*pointer_len - 4:
+                if j == carry_start + pointer_len - 4:
                     #flip the fourth bit to add 8 to the pointer
                     inst_list.append("TOFF 1 1 #%s #%s" % (j,j))
 
@@ -85,16 +77,14 @@ class bf_mvright(bf_compile):
         self.inst_count = len(inst_list)
         return inst_list
 
-class bf_mvleft(bf_compile):
-    def __init__(self):
-        bf_compile.__init__(self,'<')
+class bf_mvleft():
     def __call__(self,inst_count):
         inst_list = []
         for i in range(8):
-            for j in range(8*pointer_len,9*pointer_len):
+            for j in range(carry_start,carry_start + pointer_len):
                 #set each value in the carry area to 0
                 inst_list.append("TOFF 1 #%s #%s #%s" % (j,j,j))
-                if j == 9*pointer_len - 4:
+                if j == carry_start + pointer_len - 4:
                     #flip the fourth bit to add 8 to the pointer
                     inst_list.append("TOFF 1 1 #%s #%s" % (j,j))
 
@@ -119,9 +109,7 @@ class bf_mvleft(bf_compile):
         self.inst_count = len(inst_list)
         return inst_list
 
-class bf_input(bf_compile):
-    def __init__(self):
-        bf_compile.__init__(self,',')
+class bf_input():
     def __call__(self,inst_count):
         inst_list = []
 
@@ -133,9 +121,7 @@ class bf_input(bf_compile):
         self.inst_count = len(inst_list)
         return inst_list
 
-class bf_output(bf_compile):
-    def __init__(self):
-        bf_compile.__init__(self,'.')
+class bf_output():
     def __call__(self,inst_count):
         inst_list = []
 
