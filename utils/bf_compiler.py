@@ -16,8 +16,34 @@
 #########################################################################
 
 import sys
+import argparse
 
-point_len = int(sys.argv[1])
+arg = argparse.ArgumentParser(
+    description = "A brainfuck to Toffoli compiler",
+    )
+
+arg.add_argument(
+    'file-name'
+    help = 'filename to be compiled'
+    )
+
+arg.add_argument(
+    '--pointer-len',
+    help = 'length of the cell pointer to be used in bits (default 32)'
+    default = 32,
+    type = int,
+    )
+
+arg.add_argument(
+    '--dump',
+    help = 'add DUMP commands to resultant code',
+    action = 'store_true',
+    )
+
+arg = vars(arg.parse_args())
+file_name = arg['file-name']
+pointer_len = arg['pointer_len']
+dump = arg['dump']
 
 class bf_compile():
     def __init__(self,code):
@@ -51,10 +77,13 @@ class bf_mvright(bf_compile):
         #last bit doesn't set a carry bit
         inst_list.append("TOFF 1 #%s #%s #%s" % (0, point_len, 0))
 
+        if dump:
+            inst_list.append("DUMP")
+
         self.inst_count = len(inst_list)
         return inst_list
 
-with open(sys.argv[2],'r') as file:
+with open(file_name,'r') as file:
     file_string = file.read()
 
 bf_code = ''
