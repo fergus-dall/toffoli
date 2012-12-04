@@ -70,11 +70,12 @@ class bf_mvright(bf_compile):
                 #if both the carry bit and the value are set, set the
                 #next carry bit
                 inst_list.append(
-                    "TOFF #%s #%s #%s #%s" % (i, i+pointer_len,
-                                              i+pointer_len - 1, i+pointer_len - 1))
+                    "TOFF #%s #%s #%s #%s" % (j, j + pointer_len*(8-i),
+                                              j + pointer_len*(8-i) - 1,
+                                              j + pointer_len*(8-i) - 1))
                 #if carry XOR value is true, set the value bit
                 inst_list.append(
-                    "TOFF 1 #%s #%s #%s" % (i, i+pointer_len, i))
+                    "TOFF 1 #%s #%s #%s" % (j, j + pointer_len*(8-i), j))
             #last bit doesn't set a carry bit
             inst_list.append("TOFF 1 #%s #%s #%s" % (0, pointer_len, 0))
 
@@ -109,6 +110,8 @@ for i in range(8):
     inst_list.append("TOFF 1 %s #%s #%s" % (i & 1<<0,
                                             (i+1) * pointer_len - 1,
                                             (i+1) * pointer_len - 1))
+
+inst_list.append("DUMP")
 
 for i in bf_obj_list:
     inst_list += i(len(inst_list))
