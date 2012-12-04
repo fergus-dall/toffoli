@@ -1,14 +1,13 @@
 import sys
 import re
 
-validate = re.compile("\s*((TOFF|JMP|IN|OUT)(\s+#?\d+)+)?\s*(;.*)?",re.DOTALL)
+validate = re.compile("\s*((TOFF|JMP|IN|OUT)(\s+\d*#?\d+)+)?\s*(;.*)?",re.DOTALL)
 
 memory = {}
 
 def get_bit(bit):
-    global memory
     if not memory.has_key(bit):
-        memory[bit] = False
+        return False
     return memory[bit]
 
 def toffoli(in1,in2,in3,out):
@@ -18,10 +17,23 @@ def toffoli(in1,in2,in3,out):
     else:
         memory[out] = in3
 
-def deref(addr):
+def get_addr(addr):
     if addr[0] == '#':
-        return get_bit(int(addr[1:]))
-    return int(addr)
+        return int(addr[1:])
+    else:
+        pointer_len = int(addr[:addr.find('#')])
+        pointer_loc = int(addr[addr.find('#')+1:])
+        pointer_list = []
+        for i in range(pointer_loc,pointer_loc+pointer_len):
+            pointer_list.append(get_bit(i))
+        pointer = bit_to_int(pointer_list)
+        return pointer
+
+def deref(addr):
+    if addr.count('#') != 0:
+        return get_bit(get_addr(addr))
+    else:
+        return int(addr)
 
 def get_ch():
     ch = sys.stdin.read(1)
@@ -41,6 +53,13 @@ def bit_to_ch(l):
         ch <<= 1
         ch += l.pop(0)
     return chr(ch)
+
+def bit_to_int(l):
+    i = 0
+    while len(l) != 0:
+        i <<= 1
+        i += l.pop(0)
+    return i
 
 def validate_line(str):
     result = validate.match(str)
@@ -84,14 +103,16 @@ while instruction_pointer < len(lines):
         inputs = lines[instruction_pointer][1:]
         ch = get_ch()
         l = ch_to_bit(ch)
+        addr = get_addr(inputs[0])
         for i in range(8):
-            memory[int(inputs[0][1:]) + i] = l[i]
+            memory[addr + i] = l[i]
         
     elif lines[instruction_pointer][0] == 'OUT':
         inputs = lines[instruction_pointer][1:]
         l = []
+        addr = get_addr(inputs[0])
         for i in range(8):
-            l.append(get_bit(int(inputs[0][1:]) + i))
+            l.append(get_bit(addr + i))
         ch = bit_to_ch(l)
         sys.stdout.write(ch)
         
