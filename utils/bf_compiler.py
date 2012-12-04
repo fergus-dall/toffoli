@@ -85,6 +85,34 @@ class bf_mvright(bf_compile):
         self.inst_count = len(inst_list)
         return inst_list
 
+class bf_input(bf_compile):
+    def __init__(self):
+        bf_compile.__init__(self,',')
+    def __call__(self,inst_count):
+        inst_list = []
+
+        inst_list.append("IN %s#0" % (pointer_len,))
+
+        if dump:
+            inst_list.append("DUMP")
+
+        self.inst_count = len(inst_list)
+        return inst_list
+
+class bf_output(bf_compile):
+    def __init__(self):
+        bf_compile.__init__(self,'.')
+    def __call__(self,inst_count):
+        inst_list = []
+
+        inst_list.append("OUT %s#0" % (pointer_len,))
+
+        if dump:
+            inst_list.append("DUMP")
+
+        self.inst_count = len(inst_list)
+        return inst_list
+
 with open(file_name,'r') as file:
     file_string = file.read()
 
@@ -99,6 +127,10 @@ inst_list = []
 for i in bf_code:
     if i == '>':
         bf_obj_list.append(bf_mvright())
+    elif i == ',':
+        bf_obj_list.append(bf_input())
+    elif i == '.':
+        bf_obj_list.append(bf_output())
 
 for i in range(8):
     inst_list.append("TOFF 1 %s #%s #%s" % (i & 1<<2,
