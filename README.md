@@ -24,11 +24,13 @@ followed by the inputs, separated by spaces:
 [instruction] [input1] [input2] [input3] ...
 
 Each input can be either a number or a reference to a memory
-address. Numbers are written literaly while memory addresses are
-prefaced by a #, e.g.:
+address. Numbers are written literally while memory addresses are
+prefaced by a #. By putting a number before the #, you reference the
+pointer starting at that location e.g.:
 
 * 1 is the number 1
 * #7 is a reference to memory address 7
+* 4#7 means to use the 4 bit pointer that starts at location 7 as input
 
 Instructions
 =============
