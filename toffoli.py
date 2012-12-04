@@ -1,13 +1,38 @@
 import sys
 import re
+import argparse
+import pprint
 
-validate = re.compile("\s*((TOFF|JMP|IN|OUT)(\s+\d*#?\d+)+)?\s*(;.*)?",re.DOTALL)
+arg = argparse.ArgumentParser(
+    description = "An interpreter for the Toffoli esoteric language",
+    epilog = "",
+    )
+
+arg.add_argument(
+    'file-name',
+    help = "filename of toffoli program to run",
+    )
+
+arg.add_argument(
+    '--dump',
+    action = 'store_true',
+    help = "make DUMP commands print memory to stdout",
+    )
+
+arg = vars(arg.parse_args())
+file_name = arg['file-name']
+dump = arg['dump']
+
+validate = re.compile(
+    "\s*((TOFF|JMP|IN|OUT|DUMP)(\s+\d*#?\d+)+)?\s*(;.*)?"
+    ,re.DOTALL)
 
 memory = {}
 
 def get_bit(bit):
+    global memory
     if not memory.has_key(bit):
-        return False
+        memory[bit] = False
     return memory[bit]
 
 def toffoli(in1,in2,in3,out):
@@ -68,7 +93,7 @@ def validate_line(str):
     else:
         return False
 
-with open(sys.argv[1],'r') as file:
+with open(file_name,'r') as file:
     lines = file.readlines()
 
 for (index,i) in enumerate(lines):
@@ -115,7 +140,11 @@ while instruction_pointer < len(lines):
             l.append(get_bit(addr + i))
         ch = bit_to_ch(l)
         sys.stdout.write(ch)
-        
+
+    elif lines[instruction_pointer][0] == 'DUMP':
+        if dump:
+            pprint(memory)
+
     instruction_pointer += 1
 
 print
