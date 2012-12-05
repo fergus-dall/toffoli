@@ -290,6 +290,10 @@ for i in file_string:
     if i in {'<','>','+','-','.',',','[',']'}:
         bf_code += i
 
+# Move cell pointer past the end of the carry area so we don't
+# overwrite something
+bf_code = (carry_end/8 + 1) * '>' + bf_code
+
 bf_obj_list = parse(bf_code)
 inst_list = []
 
@@ -304,7 +308,8 @@ for i in range(8):
                                             (i+1) * pointer_len - 1,
                                             (i+1) * pointer_len - 1))
 
-inst_list.append("DUMP")
+if dump:
+    inst_list.append("DUMP")
 
 for i in bf_obj_list:
     inst_list += i(len(inst_list))
