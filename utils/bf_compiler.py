@@ -69,7 +69,9 @@ class bf_mvright():
                 inst_list.append(
                     "TOFF 1 #%s #%s #%s" % (j, j + pointer_len*(8-i), j))
             #last bit doesn't set a carry bit
-            inst_list.append("TOFF 1 #%s #%s #%s" % (0, pointer_len, 0))
+            inst_list.append("TOFF 1 #%s #%s #%s" % (i*pointer_len,
+                                                     carry_start,
+                                                     i*pointer_len))
 
         if dump:
             inst_list.append("DUMP")
@@ -101,7 +103,42 @@ class bf_mvleft():
                 inst_list.append(
                     "TOFF 1 #%s #%s #%s" % (j, j + pointer_len*(8-i), j))
             #last bit doesn't set a carry bit
-            inst_list.append("TOFF 1 #%s #%s #%s" % (0, pointer_len, 0))
+            inst_list.append("TOFF 1 #%s #%s #%s" % (i*pointer_len,
+                                                     carry_start,
+                                                     i*pointer_len))
+
+        if dump:
+            inst_list.append("DUMP")
+
+        self.inst_count = len(inst_list)
+        return inst_list
+
+class bf_plus():
+    def __call__(self,inst_count):
+        inst_list = []
+        for j in range(carry_start,carry_start + 8):
+            #set each value in the carry area to 0
+            inst_list.append("TOFF 1 #%s #%s #%s" % (j,j,j))
+            if j == carry_start + 7:
+                #flip the first bit to add 1 to the cell
+                inst_list.append("TOFF 1 1 #%s #%s" % (j,j))
+        for j in range(7,0,-1):
+            #if both the carry bit and the value are set, set the
+            #next carry bit
+            inst_list.append(
+                "TOFF #%s %s#%s #%s #%s" % (j + carry_start,
+                                            pointer_len, j*pointer_len,
+                                            j + carry_start - 1,
+                                            j + carry_start - 1))
+            #if carry XOR value is true, set the value bit
+            inst_list.append(
+                "TOFF 1 #%s %s#%s %s#%s" % (j + carry_start,
+                                            pointer_len, j*pointer_len,
+                                            pointer_len, j*pointer_len))
+        #last bit doesn't set a carry bit
+        inst_list.append("TOFF 1 %s#0 #%s %s#0" % (pointer_len,
+                                                   carry_start,
+                                                   pointer_len))
 
         if dump:
             inst_list.append("DUMP")
@@ -149,6 +186,8 @@ for i in bf_code:
         bf_obj_list.append(bf_mvright())
     elif i == '<':
         bf_obj_list.append(bf_mvleft())
+    elif i == '+':
+        bf_obj_list.append(bf_plus())
     elif i == ',':
         bf_obj_list.append(bf_input())
     elif i == '.':
