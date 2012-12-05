@@ -22,7 +22,6 @@ import pprint
 
 arg = argparse.ArgumentParser(
     description = "An interpreter for the Toffoli esoteric language",
-    epilog = "",
     )
 
 arg.add_argument(
@@ -133,7 +132,7 @@ while instruction_pointer < len(lines):
         in1 = deref(inputs[0])
         in2 = deref(inputs[1])
         in3 = deref(inputs[2])
-        out = int(inputs[3][1:])
+        out = get_addr(inputs[3])
         toffoli(in1,in2,in3,out)
         
     elif lines[instruction_pointer][0] == 'JMP':
