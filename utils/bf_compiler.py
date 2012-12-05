@@ -209,6 +209,79 @@ class bf_output():
         self.inst_count = len(inst_list)
         return inst_list
 
+class bf_loop():
+    def __init__(self,code):
+        count = 1
+        i = 1
+        while count > 0:
+            if code[i] == '[':
+                count += 1
+            elif code[i] == ']':
+                count -= 1
+            i += 1
+
+        self.len = i - 1
+        self.bf_obj_list = parse(code[1:i - 1])
+    def __call__(self,inst_count):
+        inst_list = []
+
+        header_end = inst_count + 9
+        inst_count = header_end
+
+        for i in self.bf_obj_list:
+            inst_list += i(inst_count)
+            inst_count += i.inst_count
+
+        footer_end = inst_count + 9
+
+        header = []
+        for i in range(8):
+            header.append("JMP %s#%s %s" % (pointer_len,i*pointer_len,
+                                            header_end))
+        header.append("JMP 1 %s" % (footer_end,))
+
+        footer = []
+        for i in range(8):
+            footer.append("JMP %s#%s %s" % (pointer_len,i*pointer_len,
+                                            header_end))
+        footer.append("JMP 1 %s" % (footer_end,))
+
+        inst_list = header + inst_list + footer
+
+        self.inst_count = len(inst_list)
+        return inst_list
+        
+def parse(code):
+    bf_obj_list = []
+    i = 0
+
+    while i < len(code):
+        if code[i] == '>':
+            bf_obj_list.append(bf_mvright())
+        elif code[i] == '<':
+            bf_obj_list.append(bf_mvleft())
+        elif code[i] == '+':
+            bf_obj_list.append(bf_plus())
+        elif code[i] == '-':
+            bf_obj_list.append(bf_minus())
+        elif code[i] == ',':
+            bf_obj_list.append(bf_input())
+        elif code[i] == '.':
+            bf_obj_list.append(bf_output())
+        elif code[i] == '[':
+            obj = bf_loop(code[i:])
+            bf_obj_list.append(obj)
+            i += obj.len
+        elif code[i] == ']':
+            print "error, unmached ']'"
+            raise ValueError
+        else:
+            print "error, unrecognised symbol %s" % (code[i],)
+            raise ValueError
+
+        i += 1
+    return bf_obj_list
+
 with open(file_name,'r') as file:
     file_string = file.read()
 
@@ -217,22 +290,8 @@ for i in file_string:
     if i in {'<','>','+','-','.',',','[',']'}:
         bf_code += i
 
-bf_obj_list = []
+bf_obj_list = parse(bf_code)
 inst_list = []
-
-for i in bf_code:
-    if i == '>':
-        bf_obj_list.append(bf_mvright())
-    elif i == '<':
-        bf_obj_list.append(bf_mvleft())
-    elif i == '+':
-        bf_obj_list.append(bf_plus())
-    elif i == '-':
-        bf_obj_list.append(bf_minus())
-    elif i == ',':
-        bf_obj_list.append(bf_input())
-    elif i == '.':
-        bf_obj_list.append(bf_output())
 
 for i in range(8):
     inst_list.append("TOFF 1 %s #%s #%s" % (i & 1<<2,
