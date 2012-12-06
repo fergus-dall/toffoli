@@ -30,14 +30,21 @@ arg.add_argument(
     )
 
 arg.add_argument(
-    '--dump',
+    '--dump-mem',
     action = 'store_true',
     help = "make DUMP commands print memory to stdout",
     )
 
+arg.add_argument(
+    '--print-inst-count',
+    action = 'store_true',
+    help = "print the value of the instruction pointer to stdout after each step",
+    )
+
 arg = vars(arg.parse_args())
 file_name = arg['file-name']
-dump = arg['dump']
+dump_mem = arg['dump_mem']
+print_inst_count = arg['print_inst_count']
 
 validate = re.compile(
     "\s*((TOFF|JMP|IN|OUT|DUMP)(\s+\d*#?\d+)*)?\s*(;.*)?"
@@ -158,9 +165,12 @@ while instruction_pointer < len(lines):
         sys.stdout.write(ch)
 
     elif lines[instruction_pointer][0] == 'DUMP':
-        if dump:
+        if dump_mem:
             pprint.pprint(memory)
 
+    if print_inst_count:
+        print instruction_pointer
+    
     instruction_pointer += 1
 
 print
